@@ -1,5 +1,37 @@
+const gameLogic = (() => {
+    let isGameActive = false;
+    let currentPlayer;
+    let player1;
+    let player2;
+
+    const startGame = () => {
+        isGameActive = true;
+        createPlayers();
+        currentPlayer = player1;
+        displayController.displayBoard(gameBoard.getBoard());
+    }
+
+    const createPlayers = () => {
+        player1 = createPlayer("sanzhar", "X");
+        player2 = createPlayer("arthur", "O");
+    }
+
+    const handleBoardClick = (event) => {
+        if (!isGameActive) return;
+
+        const index = event.target.dataset.index
+        const square = gameBoard.getBoard()[index]
+        if (square !== "") return;
+
+        gameBoard.updateBoard(index, currentPlayer.mark);
+        displayController.displayBoard(gameBoard.getBoard());
+    }
+
+    return { startGame, handleBoardClick }
+})();
+
 const gameBoard = (() => {
-    let board = ["", "", "", "", "", "", "", "", ""];
+    let board = ["", "", "", "O", "O", "", "", "", ""];
 
     const getBoard = () => {
         return board;
@@ -10,7 +42,7 @@ const gameBoard = (() => {
     };
 
     const resetBoard = () => {
-        board = ["X", "", "", "", "O", "X", "", "", ""];
+        board = ["", "", "", "", "", "", "", "", ""];
     };
 
     return {
@@ -22,43 +54,22 @@ const gameBoard = (() => {
 
 const displayController = (() => {
     const board = document.querySelector(".board");
-
-    const generateSquares = () => {
-        for (let i = 0; i < 9; i++) {
-            const square = document.createElement("button");
-            square.dataset.index = i;
-            board.appendChild(square);
-        }
-    }
     
-    generateSquares();
-
     const displayBoard = (board) => {
         const squares = document.querySelectorAll(".board button");
-    
+
         squares.forEach((square) => {
-            square.textContent = marks[square.dataset.index] 
+            square.textContent = board[square.dataset.index]
         });
     }
+
+    board.addEventListener("click", gameLogic.handleBoardClick)
+
+    return { displayBoard }
 })();
 
 const createPlayer = (name, mark) => {
     return { name, mark }
 }
 
-const gameLogic = (() => {
-    let player1;
-    let player2;
-    let currentPlayer;
-
-    const createPlayers = () => {
-        player1 = createPlayer("sanzhar", "X");
-        player2 = createPlayer("arthur", "O");
-    }
-
-    const startGame = () => {
-        createPlayers();
-    }
-
-    startGame();
-})();
+gameLogic.startGame();

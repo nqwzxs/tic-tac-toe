@@ -17,6 +17,8 @@ body {
 }
 
 .board {
+    background: black;
+    gap: 0.5rem;
     width: 512px;
     height: 512px;
     display: grid;
@@ -25,4 +27,11 @@ body {
 
 .board button {
     font-size: 8rem;
+    background: white;
+    border: none;
+    cursor: pointer;
+}
+
+.board button:hover {
+    background: #f3f4f6;
 }
