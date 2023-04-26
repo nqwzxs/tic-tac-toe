@@ -95,6 +95,7 @@ const gameBoard = (() => {
 
 const displayController = (() => {
     const board = document.querySelector(".board");
+    const startButton = document.querySelector(".start-button");
     
     const displayBoard = (board) => {
         const squares = document.querySelectorAll(".board button");

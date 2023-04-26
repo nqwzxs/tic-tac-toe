@@ -12,6 +12,8 @@
 body {
     height: 100vh;
     display: flex;
+    flex-direction: column;
+    gap: 4rem;
     align-items: center;
     justify-content: center;
 }
@@ -34,4 +36,43 @@ body {
 
 .board button:hover {
     background: #f3f4f6;
+}
+
+.container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.container > input {
+    padding: 0.5rem 1rem;
+    outline: none;
+}
+
+.container > button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: black;
+    color: white;
+}
+
+.result-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 512px;
+    height: 256px;
+    background: #f3f4f6;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 4rem 0.25rem black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    transition: all .5s ease;
+    visibility: hidden;
 }
