@@ -57,6 +57,7 @@ body {
     border-radius: 0.25rem;
     background: black;
     color: white;
+    cursor: pointer;
 }
 
 .result-modal {
@@ -68,7 +69,7 @@ body {
     height: 256px;
     background: #f3f4f6;
     border-radius: 0.25rem;
-    box-shadow: 0 0 4rem 0.25rem black;
+    box-shadow: 0 0 0.5rem 0.05rem black;
     display: flex;
     align-items: center;
     justify-content: center;

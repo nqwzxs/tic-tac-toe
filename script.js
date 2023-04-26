@@ -12,6 +12,9 @@ const gameLogic = (() => {
     let player2;
 
     const startGame = () => {
+        gameBoard.resetBoard();
+        displayController.hideModal();
+        displayController.hideContainer();
         isGameActive = true;
         createPlayers();
         currentPlayer = player1;
@@ -19,8 +22,9 @@ const gameLogic = (() => {
     }
 
     const createPlayers = () => {
-        player1 = createPlayer("sanzhar", "X");
-        player2 = createPlayer("arthur", "O");
+        const playerNames = displayController.getPlayerInputs();
+        player1 = createPlayer(playerNames[0], "X");
+        player2 = createPlayer(playerNames[1], "O");
     }
 
     const playTurn = (event) => {
@@ -32,8 +36,13 @@ const gameLogic = (() => {
 
         gameBoard.updateBoard(index, currentPlayer.mark);
         displayController.displayBoard(gameBoard.getBoard());
-        if (isWinner()) console.log("win");
-        if (isTie()) console.log("tie");
+
+        if (isWinner()) {
+            winner = currentPlayer;
+            endGame();
+        } else if (isTie()) {
+            endGame();
+        }
 
         currentPlayer = currentPlayer === player1 ? player2 : player1;
     }
@@ -49,6 +58,14 @@ const gameLogic = (() => {
                 return true
             };
         }
+    }
+
+    const endGame = () => {
+        let result = winner ? `${winner.name} won the game!` : "It's a tie."
+        displayController.addTextToModal(result);
+        displayController.showModal();
+        displayController.showContainer();
+        isGameActive = false;
     }
 
     return { startGame, playTurn }
@@ -96,22 +113,63 @@ const gameBoard = (() => {
 const displayController = (() => {
     const board = document.querySelector(".board");
     const startButton = document.querySelector(".start-button");
+    const container = document.querySelector(".container");
+    const resultModal = document.querySelector(".result-modal");
     
     const displayBoard = (board) => {
         const squares = document.querySelectorAll(".board button");
-
+        
         squares.forEach((square) => {
-            square.textContent = board[square.dataset.index]
+            square.textContent = board[square.dataset.index];
         });
     }
 
-    board.addEventListener("click", gameLogic.playTurn)
+    const addTextToModal = (result) => {
+        resultModal.textContent = result;
+    }
 
-    return { displayBoard }
+    const showModal = () => {
+        resultModal.style.visibility = "visible";
+    }
+
+    const hideModal = () => {
+        resultModal.style.visibility = "hidden";
+    }
+    
+    const hideContainer = () => {
+        container.style.visibility = "hidden";
+    }
+
+    const showContainer = () => {
+        container.style.visibility = "visible";
+    }
+
+    const getPlayerInputs = () => {
+        const playerInputs = document.querySelectorAll(".player-input");
+
+        let playerNames = [];
+
+        playerInputs.forEach((playerInput) => {
+            playerNames.push(playerInput.value);
+        });
+
+        return playerNames;
+    }
+
+    board.addEventListener("click", gameLogic.playTurn);
+    startButton.addEventListener("click", gameLogic.startGame)
+
+    return {
+        displayBoard,
+        getPlayerInputs,
+        hideContainer,
+        showContainer,
+        hideModal,
+        showModal,
+        addTextToModal
+    }
 })();
 
 const createPlayer = (name, mark) => {
     return { name, mark }
 }
-
-gameLogic.startGame();
