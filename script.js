@@ -1,5 +1,12 @@
 const gameLogic = (() => {
+    const threeInARows = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+        [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]
+    ]
+
     let isGameActive = false;
+    let winner;
+
     let currentPlayer;
     let player1;
     let player2;
@@ -16,22 +23,44 @@ const gameLogic = (() => {
         player2 = createPlayer("arthur", "O");
     }
 
-    const handleBoardClick = (event) => {
+    const playTurn = (event) => {
         if (!isGameActive) return;
 
-        const index = event.target.dataset.index
-        const square = gameBoard.getBoard()[index]
+        const index = event.target.dataset.index;
+        const square = gameBoard.getBoard()[index];
         if (square !== "") return;
 
         gameBoard.updateBoard(index, currentPlayer.mark);
         displayController.displayBoard(gameBoard.getBoard());
+        if (isWinner()) console.log("win");
+        if (isTie()) console.log("tie");
+
+        currentPlayer = currentPlayer === player1 ? player2 : player1;
     }
 
-    return { startGame, handleBoardClick }
+    const isTie = () => {
+        if (!gameBoard.isBoardAvailable()) return true;
+    }
+
+    const isWinner = () => {
+        for (let index = 0; index < threeInARows.length; index++) {
+            const row = threeInARows[index];
+            if (row.every((index) => gameBoard.getBoard()[index] === currentPlayer.mark)) {
+                return true
+            };
+        }
+    }
+
+    return { startGame, playTurn }
 })();
 
 const gameBoard = (() => {
-    let board = ["", "", "", "O", "O", "", "", "", ""];
+    const winRows = [
+        [1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7],
+        [2, 5, 8], [3, 6, 9], [1, 5, 9], [7, 5, 3]
+    ]
+
+    let board = ["", "", "", "", "", "", "", "", ""];
 
     const getBoard = () => {
         return board;
@@ -45,10 +74,22 @@ const gameBoard = (() => {
         board = ["", "", "", "", "", "", "", "", ""];
     };
 
+    const checkRows = (mark) => {
+        winRows.forEach((winRow) => {
+            if (winRow.every((index) => board[index - 1] === mark)) return true;
+        });
+    }
+
+    const isBoardAvailable = () => {
+        if (board.includes("")) return true;
+    }
+
     return {
         getBoard,
         updateBoard,
-        resetBoard
+        resetBoard,
+        checkRows,
+        isBoardAvailable
     };
 })();
 
@@ -63,7 +104,7 @@ const displayController = (() => {
         });
     }
 
-    board.addEventListener("click", gameLogic.handleBoardClick)
+    board.addEventListener("click", gameLogic.playTurn)
 
     return { displayBoard }
 })();
